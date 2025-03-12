@@ -16,6 +16,8 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
 
         private static List<CountryFlag> countryFlags = [];
 
+        private static List<Maps> countryMaps = [];
+
         public static void SeedCountries(this ModelBuilder modelBuilder)
         {
             // Get data from JSON file
@@ -46,6 +48,8 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
 
                 modelBuilder.Entity<CountryLocation>().HasData(countryLocation);
 
+                modelBuilder.Entity<Maps>().HasData(countryMaps);
+
                 SeedCountryFlags(countryDetails, countries);
 
                 modelBuilder.Entity<CountryFlag>().HasData(countryFlags);
@@ -65,15 +69,16 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
                         CountryDetailId = countryDetail.Find(c => c.Alpha2Code == country.Cca2)!.Id,
                         Region = country.Region,
                         SubRegion = country.Subregion,
-                        Capital = country.Capital,
-                        MapAddresses = new()
-                        {
-                            Id = Guid.NewGuid(),
-                            CountryLocationId = newId,
-                            OpenStreetMaps = country.Maps.OpenStreetMaps,
-                            GoogleMaps = country.Maps.GoogleMaps,
-                        }
-   
+                        Capital = country.Capital
+                       });
+
+                countryMaps.Add(
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        CountryLocationId = newId,
+                        OpenStreetMaps = country.Maps.OpenStreetMaps,
+                        GoogleMaps = country.Maps.GoogleMaps,
                     });
             });  
         }
@@ -90,6 +95,7 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
                         CountryDetailId = countryDetail.Find(c => c.Alpha2Code == country.Cca2)!.Id,
                         Svg = country.Flags.Svg,
                         Png = country.Flags.Png,
+                        FlagCode = country.Flag
                     });
             });
         }
