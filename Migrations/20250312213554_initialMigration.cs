@@ -61,8 +61,8 @@ namespace Flag_Explorer_App.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     CountryDetailId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Region = table.Column<string>(type: "TEXT", nullable: false),
-                    SubRegion = table.Column<string>(type: "TEXT", nullable: false),
-                    Capital = table.Column<string>(type: "TEXT", nullable: false),
+                    SubRegion = table.Column<string>(type: "TEXT", nullable: true),
+                    Capital = table.Column<string>(type: "TEXT", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "TEXT", nullable: true),
                     DateModified = table.Column<DateTime>(type: "TEXT", nullable: true)

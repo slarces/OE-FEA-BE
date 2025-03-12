@@ -99,7 +99,6 @@ namespace Flag_Explorer_App.Migrations
                         .HasColumnType("TEXT");
 
                     b.PrimitiveCollection<string>("Capital")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CountryDetailId")
@@ -119,7 +118,6 @@ namespace Flag_Explorer_App.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SubRegion")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -197,8 +195,7 @@ namespace Flag_Explorer_App.Migrations
 
             modelBuilder.Entity("Flag_Explorer_App.Domain.Entities.Country.CountryLocation", b =>
                 {
-                    b.Navigation("MapAddresses")
-                        .IsRequired();
+                    b.Navigation("MapAddresses");
                 });
 #pragma warning restore 612, 618
         }
