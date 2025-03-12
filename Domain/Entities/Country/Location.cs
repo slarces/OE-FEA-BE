@@ -9,11 +9,11 @@ namespace Flag_Explorer_App.Domain.Entities.Country
 
         public string Region { get; set; }
 
-        public string SubRegion { get; set; }
+        public string? SubRegion { get; set; }
 
-        public List<string> Capital { get; set; }
+        public List<string>? Capital { get; set; }
 
-        public Maps MapAddresses { get; set; }
+        public Maps? MapAddresses { get; set; }
 
     }
 
