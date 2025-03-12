@@ -1,5 +1,8 @@
-﻿using Flag_Explorer_App.Infrastructure.Abstract;
+﻿using Flag_Explorer_App.Domain.Entities.Country;
+using Flag_Explorer_App.Dtos.Country;
+using Flag_Explorer_App.Infrastructure.Abstract;
 using Flag_Explorer_App.Infrastructure.Extensions;
+using Flag_Explorer_App.Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -32,6 +35,14 @@ namespace Flag_Explorer_App.Infrastructure
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromSpecificAssembly(Assembly.GetExecutingAssembly());
+
+            modelBuilder.SeedCountries();
         }
+
+        public DbSet<CountryDetail> CountryDetail { get; set; }
+
+        public DbSet<CountryLocation> CountryLocations { get; set; }
+
+        public DbSet<CountryFlag> CountryFlag { get; set; }
     }
 }

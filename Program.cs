@@ -1,3 +1,7 @@
+using Flag_Explorer_App.Infrastructure;
+using Flag_Explorer_App.Infrastructure.Seeders;
+using Flag_Explorer_App.Infrastructure.Service;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +15,31 @@ builder.Services.AddSwaggerGen(s =>
 });
 
 // Configure SQLite Database
-builder.Services.AddDbContext<>(options => options.useSqlite())
+builder.Services.AddDbContext<FlagExplorerDbContext>(options =>
+    options.UseSqlite("Data Source=flagexplorer.db"));
+
+// Register HttpClient
+builder.Services.AddHttpClient<CountryDataService>();
+
+// Register country data service
+builder.Services.AddScoped<CountryDataService>();
+
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    IServiceProvider services = scope.ServiceProvider;
+    FlagExplorerDbContext dbContext = services.GetRequiredService<FlagExplorerDbContext>();
+    CountryDataService countryDataService = services.GetRequiredService<CountryDataService>();
+
+    // Fetch and save data before migrations
+    await countryDataService.FetchAndStoreCountriesAsync();
+
+    // Apply migrations automatically
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -29,3 +55,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

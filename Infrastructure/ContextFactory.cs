@@ -16,7 +16,7 @@ namespace Flag_Explorer_App.Infrastructure
             var optionsBuilder = new DbContextOptionsBuilder<FlagExplorerDbContext>();
 
             optionsBuilder.UseSqlite(
-                ConnectionHelper.GetString("Embedded")
+                "Data Source=flagexplorer.db"
                 );
                 
             return new FlagExplorerDbContext(optionsBuilder.Options);
