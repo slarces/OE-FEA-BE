@@ -1,5 +1,6 @@
 ﻿using Flag_Explorer_App.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Flag_Explorer_App.Infrastructure.Abstract
 {
@@ -67,6 +68,9 @@ namespace Flag_Explorer_App.Infrastructure.Abstract
                     optionsBuilder.EnableSensitiveDataLogging();
                 });
             }
+
+            optionsBuilder.ConfigureWarnings(warnings =>
+                    warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 
             base.OnConfiguring(optionsBuilder);
         }

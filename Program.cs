@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen(s =>
 
 // Configure SQLite Database
 builder.Services.AddDbContext<FlagExplorerDbContext>(options =>
-    options.UseSqlite("Data Source=flagexplorer.db").EnableSensitiveDataLogging());
+    options.UseSqlite("Data Source=flagexplorer.db").EnableSensitiveDataLogging(), ServiceLifetime.Scoped);
 
 // Register HttpClient
 builder.Services.AddHttpClient<CountryDataService>();

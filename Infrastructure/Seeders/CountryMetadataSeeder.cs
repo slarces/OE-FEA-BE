@@ -1,5 +1,6 @@
 ﻿using Flag_Explorer_App.Domain.Entities.Country;
 using Flag_Explorer_App.Dtos.Country;
+using Flag_Explorer_App.Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 using System.Security.AccessControl;
@@ -10,7 +11,11 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
 {
     public static class CountryMetadataSeeder
     {
+        private static bool _seeded = false;
+
         private static readonly string _jsonFilePath = "Data/countries.json";
+
+        private static List<CountryDetail> countryDetails = [];
 
         private static List<CountryLocation> countryLocation = [];
 
@@ -20,19 +25,36 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
 
         public static void SeedCountries(this ModelBuilder modelBuilder)
         {
+            if (_seeded) return;
+            _seeded = true;
+
             // Get data from JSON file
             List<CountryDto> countries = GetCountries();
 
-            // DB Model
-            List<CountryDetail> countryDetails = [];
-
             if (countries.Count != 0)
             {
-                countries.ForEach(country => {
-                    countryDetails.Add(
-                        new() 
+                CreateSeedModelData(countries);
+
+                modelBuilder.Entity<CountryDetail>().HasData(countryDetails);
+
+                modelBuilder.Entity<CountryLocation>().HasData(countryLocation);
+
+                modelBuilder.Entity<Maps>().HasData(countryMaps);
+
+                modelBuilder.Entity<CountryFlag>().HasData(countryFlags);
+            }
+        }
+
+        private static void CreateSeedModelData(List<CountryDto> countries)
+        {
+            countries.ForEach(country => {
+
+                var countryDetailId = StaticGuid.GenerateDeterministicGuid(country.Cca3);
+
+                countryDetails.Add(
+                        new()
                         {
-                            Id = Guid.NewGuid(),
+                            Id = StaticGuid.GenerateDeterministicGuid(country.Cca3),
                             CommonName = country.Name.Common,
                             OfficialName = country.Name.Official,
                             Alpha2Code = country.Cca2,
@@ -40,59 +62,35 @@ namespace Flag_Explorer_App.Infrastructure.Seeders
                             Population = country.Population,
                         }
                     );
-                });
 
-                modelBuilder.Entity<CountryDetail>().HasData(countryDetails);
-
-                SeedCountryLocations(countryDetails, countries);
-
-                modelBuilder.Entity<CountryLocation>().HasData(countryLocation);
-
-                modelBuilder.Entity<Maps>().HasData(countryMaps);
-
-                SeedCountryFlags(countryDetails, countries);
-
-                modelBuilder.Entity<CountryFlag>().HasData(countryFlags);
-            }
-        }
-
-        
-        private static void SeedCountryLocations(List<CountryDetail> countryDetail, List<CountryDto> countries)
-        {
-            countries.ForEach(country => {
-                var newId = Guid.NewGuid();
+                var countryId = StaticGuid.GenerateDeterministicGuid($"{country.Cca3}" + $"{country.Ccn3}");
 
                 countryLocation.Add(
                     new()
                     {
-                        Id = newId,
-                        CountryDetailId = countryDetail.Find(c => c.Alpha2Code == country.Cca2)!.Id,
+                        Id = countryId,
+                        CountryDetailId = countryDetailId,
                         Region = country.Region,
                         SubRegion = country.Subregion,
                         Capital = country.Capital
-                       });
+                    });
 
                 countryMaps.Add(
                     new()
                     {
-                        Id = Guid.NewGuid(),
-                        CountryLocationId = newId,
+                        Id = StaticGuid.GenerateDeterministicGuid($"{country.Cca3}" + $"{country.Area}"),
+                        CountryLocationId = countryId,
                         OpenStreetMaps = country.Maps.OpenStreetMaps,
                         GoogleMaps = country.Maps.GoogleMaps,
                     });
-            });  
-        }
 
-        private static void SeedCountryFlags(List<CountryDetail> countryDetail, List<CountryDto> countries)
-        {
-            countries.ForEach(country => {
-                var newId = Guid.NewGuid();
+                var countryFlagId = StaticGuid.GenerateDeterministicGuid($"{country.Cca3}" + $"{country.Flag}" + $"{country.Cca2}");
 
                 countryFlags.Add(
                     new()
                     {
-                        Id = newId,
-                        CountryDetailId = countryDetail.Find(c => c.Alpha2Code == country.Cca2)!.Id,
+                        Id = countryFlagId,
+                        CountryDetailId = countryDetailId,
                         Svg = country.Flags.Svg,
                         Png = country.Flags.Png,
                         FlagCode = country.Flag
