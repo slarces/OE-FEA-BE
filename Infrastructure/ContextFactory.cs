@@ -17,7 +17,7 @@ namespace Flag_Explorer_App.Infrastructure
 
             optionsBuilder.UseSqlite(
                 "Data Source=flagexplorer.db"
-                );
+                ).EnableSensitiveDataLogging();
                 
             return new FlagExplorerDbContext(optionsBuilder.Options);
         }
